@@ -42,9 +42,9 @@ def load_data(file_path):
     DataFrame: The loaded data as a pandas DataFrame.
     """
     data = pd.read_csv(file_path)
-    data['dst'] = data['dst'].astype('object')
-    data['weekend'] = data['weekend'].astype('object')
-    data = data.drop(['family_id', 'username'], axis = 1)
+    #data['dst'] = data['dst'].astype('object')
+    #data['weekend'] = data['weekend'].astype('object')
+    #data = data.drop(['family_id', 'username'], axis = 1)
     return data
 
 def normalize_data(data, categorical_attributes, numerical_attributes):
@@ -79,7 +79,7 @@ def normalize_data(data, categorical_attributes, numerical_attributes):
 
     return data_normalized
 
-def train_models(x_train, x_test, y_train, y_test,save_path):
+def train_models(x_train, x_test, y_train, y_test,save_path,ct):
     """
     Train several regression models on the given training data.
 
@@ -239,4 +239,4 @@ ct = make_column_transformer(
 
 
 x_train, x_test, y_train, y_test = train_test_split(X,y, test_size=0.2, random_state=42, shuffle=True)
-train_models(x_train, x_test, y_train, y_test,save_path)
+train_models(x_train, x_test, y_train, y_test,save_path,ct)
