@@ -31,8 +31,169 @@ from sklearn.linear_model import LinearRegression, Ridge, Lasso
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from sklearn.preprocessing import MinMaxScaler
 
-raw_data=pd.read_csv('../data/data.csv')
+def load_data(file_path):
+    """
+    Load the data from the file path specified.
+
+    Parameters:
+    file_path (str): The path to the data file.
+
+    Returns:
+    DataFrame: The loaded data as a pandas DataFrame.
+    """
+    data = pd.read_csv(file_path)
+    data['dst'] = data['dst'].astype('object')
+    data['weekend'] = data['weekend'].astype('object')
+    data = data.drop(['family_id', 'username'], axis = 1)
+    return data
+
+def normalize_data(data, categorical_attributes, numerical_attributes):
+    """
+    Normalize the given data by applying one-hot encoding to categorical columns
+    and standard scaling to numerical columns.
+
+    Parameters:
+    data (DataFrame): The data to be normalized.
+    categorical_attributes (list): A list of categorical column names.
+    numerical_attributes (list): A list of numerical column names.
+
+    Returns:
+    DataFrame: The normalized data as a pandas DataFrame.
+    """
+    # transform non-numeric parameter to one-hot encoding 
+    data = pd.get_dummies(data, dummy_na=False)
+    data_skew = data.drop(categorical_attributes, axis=1)
+
+    # Normalize numerical columns
+    ct = make_column_transformer(
+        (StandardScaler(), numerical_attributes)
+    )
+    data_normalized = pd.DataFrame(ct.fit_transform(data_skew))
+
+    # Rename columns to match original data
+    col_dict = dict(zip(data_normalized.columns, numerical_attributes))
+    data_normalized = data_normalized.rename(columns=col_dict)
+
+    # Concatenate categorical and numerical columns
+    data_normalized = pd.concat([data[categorical_attributes], data_normalized], axis=1)
+
+    return data_normalized
+
+def train_models(x_train, x_test, y_train, y_test,save_path):
+    """
+    Train several regression models on the given training data.
+
+    Parameters:
+    X_train (DataFrame): The input features for training.
+    y_train (Series): The target variable for training.
+
+    Returns:
+    list: A list of tuples containing model names and corresponding trained models.
+    """
+    # Make dictionary of models
+    models = {
+        'SVR': SVR(),
+        'XGBRegressor': XGBRegressor(),
+        'Ridge': Ridge(),
+        'ElasticNet': ElasticNet(),
+        'SGDRegressor': SGDRegressor(),
+        'BayesianRidge': BayesianRidge(),
+        'LinearRegression': LinearRegression(),
+        'RandomForestRegressor': RandomForestRegressor()
+    }
+    
+    X_train_normal = pd.DataFrame(ct.fit_transform(x_train))
+    X_test_normal = pd.DataFrame(ct.transform(x_test))
+    
+    model_results = []
+    model_names = []
+
+    # Train models and store results
+    trained_models = []
+    for name, model in models.items():
+        
+        trained_model = model.fit(x_train, y_train)
+        trained_models.append((name, trained_model))
+        predicted = trained_model.predict(X_test_normal)
+        score = np.sqrt(mean_squared_error(y_test, predicted))
+        
+        model_results.append(score)
+        model_names.append(name)
+        df_results = pd.DataFrame([model_names,model_results])
+        df_results = df_results.transpose()
+        df_results = df_results.rename(columns={0:'Model',1:'RMSE'}).sort_values(by='RMSE',ascending=False)
+
+    print(df_results)
+    MLR =  XGBRegressor()
+    MLR.fit(X_train_normal,y_train)
+    # Predicting the Test set results
+    y_predict = MLR.predict(X_test_normal)
+    df = y_test.to_frame()
+    df = df.rename(columns={'Morning Alertness': 'y_test'})
+    df['y_predict'] = y_predict
+    print(df)
+    df.to_csv(save_path)
+
+    train_predictions = MLR.predict(X_train_normal)
+    print("Train R2 score:", sklearn.metrics.r2_score(y_train, train_predictions))
+    test_predictions = MLR.predict(X_test_normal)
+    print("Test R2 score:", sklearn.metrics.r2_score(y_test, test_predictions))
+    return trained_models
+
+def predict_data(X_test, trained_models):
+    """
+    Use a list of trained models to make predictions on new test data.
+
+    Parameters:
+    X_test (DataFrame): The input features for prediction.
+    trained_models (list): A list of tuples containing (model_type, model_instance).
+
+    Returns:
+    y_pred (array-like): Predicted labels for the input data.
+    """
+    # Create a list to store predictions from each model
+    model_predictions = []
+    #creating dataframe
+    df_results = pd.DataFrame([model_names,model_results])
+    df_results = df_results.transpose()
+    df_results = df_results.rename(columns={0:'Model',1:'RMSE'}).sort_values(by='RMSE',ascending=False)
+    # Make predictions for each trained model
+    for model_type, model_instance in trained_models:
+        # Use the appropriate method to make predictions based on the model type
+        if model_type == 'SVR':
+            y_pred = model_instance.predict(X_test)
+        elif model_type == 'XGBRegressor':
+            y_pred = model_instance.predict(X_test)
+        elif model_type == 'Ridge':
+            y_pred = model_instance.predict(X_test)
+        elif model_type == 'ElasticNet':
+            y_pred = model_instance.predict(X_test)
+        elif model_type == 'SGDRegressor':
+            y_pred = model_instance.predict(X_test)
+        elif model_type == 'BayesianRidge':
+            y_pred = model_instance.predict(X_test)
+        elif model_type == 'LinearRegression':
+            y_pred = model_instance.predict(X_test)
+        elif model_type == 'RandomForestRegressor':
+            y_pred = model_instance.predict(X_test)
+        else:
+            raise ValueError(f"Invalid model type '{model_type}'")
+        
+    
+        # Append the predictions to the list of model predictions
+        model_predictions.append(y_pred)
+    
+    # Take the mean of the predictions across all models to get the final prediction
+    y_pred = np.mean(model_predictions, axis=0)
+    print(model_predictions)
+    return y_pred
+
+
+
+file_path='../data/data.csv'
 save_path = '../data/predicted_result_new.csv'
+raw_data = load_data(file_path)
+
 raw_data['dst'] = raw_data['dst'].astype('object')
 raw_data['weekend'] = raw_data['weekend'].astype('object')
 
@@ -75,58 +236,7 @@ ct = make_column_transformer(
     (OneHotEncoder(handle_unknown="ignore"), ["meal_type_breakfast","sex",'zygosity','dst','weekend'])
 )
 
+
+
 x_train, x_test, y_train, y_test = train_test_split(X,y, test_size=0.2, random_state=42, shuffle=True)
-X_train_normal = pd.DataFrame(ct.fit_transform(x_train))
-X_test_normal = pd.DataFrame(ct.transform(x_test))
-
-col = final_data_col[1:]
-col_dict = dict(zip(X_train_normal.columns, col))
-X_train_normal = X_train_normal.rename(columns=col_dict)
-X_test_normal = X_test_normal.rename(columns=col_dict)
-
-#making dictionary of models
-models = {
-    'SVR':SVR(),
-    'XGBRegressor':XGBRegressor(),
-    'Ridge':Ridge(),
-    'ElasticNet':ElasticNet(),
-    'SGDRegressor':SGDRegressor(),
-    'BayesianRidge':BayesianRidge(),
-    'LinearRegression':LinearRegression(),
-    'RandomForestRegressor':RandomForestRegressor()
-}
-
-#taking results from the models
-model_results = []
-model_names = []
-
-# training the model with function
-for name,model in models.items():
-    a = model.fit(X_train_normal,y_train)
-    predicted = a.predict(X_test_normal)
-    score = np.sqrt(mean_squared_error(y_test, predicted))
-    model_results.append(score)
-    model_names.append(name)
-    
-    #creating dataframe
-    df_results = pd.DataFrame([model_names,model_results])
-    df_results = df_results.transpose()
-    df_results = df_results.rename(columns={0:'Model',1:'RMSE'}).sort_values(by='RMSE',ascending=False)
-    
-print(df_results)
-
-MLR =  XGBRegressor()
-MLR.fit(X_train_normal,y_train)
-# Predicting the Test set results
-y_predict = MLR.predict(X_test_normal)
-df = y_test.to_frame()
-df = df.rename(columns={'Morning Alertness': 'y_test'})
-df['y_predict'] = y_predict
-print(df)
-df.to_csv(save_path)
-
-train_predictions = MLR.predict(X_train_normal)
-print("Train R2 score:", sklearn.metrics.r2_score(y_train, train_predictions))
-test_predictions = MLR.predict(X_test_normal)
-print("Test R2 score:", sklearn.metrics.r2_score(y_test, test_predictions))
-
+train_models(x_train, x_test, y_train, y_test,save_path)
