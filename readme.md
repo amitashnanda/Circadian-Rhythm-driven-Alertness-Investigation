@@ -33,7 +33,10 @@ We performed analysis stated below:
 │   ├──raw_data1.xlsx
 │   └──raw_data2.xlsx       <- Raw dataset
 │   
-│   
+│                     
+├── model             <- best model saved in pickle file   
+│   └──xgb_reg.pkl 
+│
 │
 ├── plots                          <- plots created using bokeh, plotly, matplotlib, and seaborn
 │   ├──demographics          
