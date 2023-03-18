@@ -1,11 +1,12 @@
 **Group 20:** Amitash Nanda, Dhruv Talwar, Haonan Li, Zhenzhe He 
+
 **About the Repository:** The repository contains well documented jupyter notebooks and python files. All the code involves the docstrings and good coding practices, conventions taught in the lecture.
 
 # Circadian-Rhythm-driven-Alertness-Investigation
 
 **Motivation:** The motivation behind circadian rhythm is to regulate the timing and quality of sleep, which is crucial for overall health and wellbeing. Any disruptions to this internal biological clock can lead to difficulty sleeping, negatively impacting alertness, productivity, and increasing healthcare utilization and economic costs. 
 
-![image](https://user-images.githubusercontent.com/16955939/226072102-2550e6d4-200a-42d2-88b1-714b93b0750c.png)
+
 
 *A Study based on how alertness is affected by different factors in life, including sleep, food and exercise.*
 
