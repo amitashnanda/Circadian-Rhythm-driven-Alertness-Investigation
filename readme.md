@@ -1,6 +1,6 @@
 **Group 20:** Amitash Nanda, Dhruv Talwar, Haonan Li, Zhenzhe He 
 
-# Circadian-Rhythm-driven-Alertness-Investigation
+# Circadian-Rhythm-Driven-Alertness-Investigation
 
 **Motivation:** 
 
@@ -20,7 +20,7 @@ We performed analysis stated below:
 
 *Dataset: [Alertness data](https://static-content.springer.com/esm/art%3A10.1038%2Fs41467-022-34503-2/MediaObjects/41467_2022_34503_MOESM3_ESM.xlsx)*
 
-“PREDICT1”  is a two-country (UK, US) longitudinal study. The data is being collected from the user through a mobile app called Zoe App. 
+**“PREDICT1”**  is a two-country (UK, US) longitudinal study. The data is being collected from the user through a mobile app called Zoe App. 
 
 
 
@@ -28,8 +28,6 @@ We performed analysis stated below:
 
 ```
 
-├── README.md               <- README
-│
 ├── Data
 │   ├──processed_data.csv   <- Processed dataset
 │   ├──raw_data1.xlsx
@@ -37,7 +35,7 @@ We performed analysis stated below:
 │   
 │   
 │
-├── plots                          <- plots created using bokeh, plotly, and matplotlib
+├── plots                          <- plots created using bokeh, plotly, matplotlib, and seaborn
 │   ├──demographics          
 │   ├──descriptive_statistics     
 │   ├──food
@@ -114,7 +112,9 @@ conda env create -f requirement.yaml
 2. Open ```/data/```
 
     ```/raw_data1.xlsx``` is used for demographics, sleep, food, heritability, and physical activities analysis.
+
     ```/raw_data2.xlsx``` is used for descriptive statistics analysis
+    
     ```/processed_data.csv``` is the processed data 
 
 3. Open ```/src/``` 
@@ -154,3 +154,6 @@ conda env create -f requirement.yaml
 ## **Sources**
 
 *[D. Raca, D. Leahy, C.J. Sreenan and J.J. Quinlan. Beyond Throughput, The Next Generation: A 5G Dataset with Channel and Context Metrics. ACM Multimedia Systems Conference (MMSys), Istanbul, Turkey. June 8-11, 2020.](https://doi.org/10.1038/s41467-022-34503-2)*
+
+
+
