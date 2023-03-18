@@ -156,7 +156,7 @@ conda env create -f requirement.yaml
 
 ## **Sources**
 
-*[D. Raca, D. Leahy, C.J. Sreenan and J.J. Quinlan. Beyond Throughput, The Next Generation: A 5G Dataset with Channel and Context Metrics. ACM Multimedia Systems Conference (MMSys), Istanbul, Turkey. June 8-11, 2020.](https://doi.org/10.1038/s41467-022-34503-2)*
+*[Vallat, R., Berry, S.E., Tsereteli, N. et al. How people wake up is associated with previous night’s sleep together with physical activity and food intake. Nat Commun 13, 7116 (2022)](https://doi.org/10.1038/s41467-022-34503-2)*
 
 
 
